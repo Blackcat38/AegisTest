@@ -1,0 +1,33 @@
+﻿@model Library.Models.Book
+
+@{
+    ViewData["Title"] = "Return";
+}
+
+<h1>Return</h1>
+
+<h3>Are you sure you want to return this book?</h3>
+<div>
+    <h4>Book</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class = "col-sm-2">
+            Date
+        </dt>
+        <dd class = "col-sm-10">
+            @DateTime.Now
+        </dd>
+    </dl>
+    
+    <form asp-action="Return">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Return" class="btn btn-danger" /> |
+        <a asp-action="Borrow">Back to List</a>
+    </form>
+</div>

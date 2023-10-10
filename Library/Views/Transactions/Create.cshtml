@@ -1,0 +1,117 @@
+﻿@model Library.Models.Transaction
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery AntiForgery
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Transaction</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <!-- Button trigger modal -->
+        <button id="modal-loader-btn" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-loader" hidden>
+            Launch static backdrop modal
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="modal-loader" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content align-items-center" style="background: transparent;border: transparent;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="BookId" class="control-label">Book</label>
+                <select asp-for="BookId" class="form-control" asp-items="ViewBag.Books">
+                    <option value="" hidden></option>
+                </select>
+                <span asp-validation-for="BookId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Day" class="control-label"></label>
+                <input asp-for="Day" class="form-control" />
+                <span asp-validation-for="Day" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Price</label>
+                <input id="price" class="form-control" readonly />
+            </div>
+            <div class="form-group">
+                <label class="control-label">Total</label>
+                <input id="total" class="form-control" name="total" readonly />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Borrow">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            @functions {
+                public string TokenHeaderValue() {
+                    return AntiForgery.GetAndStoreTokens(Context).RequestToken;
+                }
+            }
+
+            var loader = $("#modal-loader-btn"),
+                bookField = $("#BookId"),
+                dayField = $("#Day");
+
+            dayField.on('change', function () {
+                if (bookField.val() && dayField.val() > 0) {
+                    calculateTotal();
+                }
+            });
+
+            bookField.on('change', function () {
+                if (bookField.val() && dayField.val() > 0) {
+                    calculateTotal();
+                }
+            });
+
+
+            function calculateTotal() {
+                $.ajax({
+                    url: '@Url.Action("CalculateBookPrice", "Transactions")',
+                    data: JSON.stringify({ "BookId": bookField.val(), "Day": dayField.val() }),
+                    contentType: 'application/json',
+                    headers: {
+                        'RequestVerificationToken': '@TokenHeaderValue()'
+                    },
+                    cache: false,
+                    type: "POST",
+                    beforeSend: function () {
+                        loader.click();
+                    },
+                    success: function (data, textStatus, XMLHttpRequest) {
+                        $("#price").val(data.price);
+                        $("#total").val(data.total);
+                        loader.click();
+                    },
+                    error: function() {
+                        loader.click();
+                        console.log(arguments);
+                        $("#price").val(0);
+                        $("#total").val(0);
+                    }
+                });
+            };
+        });
+    </script>
+}

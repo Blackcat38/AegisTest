@@ -1,0 +1,111 @@
+﻿@model IEnumerable<Library.Models.Procedure.GetTransaction>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+@section Styles {
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+}
+
+<h1>Index</h1>
+
+
+@* <form asp-action="Index" method="get">
+        <div class="form-actions no-color">
+            <p>
+                Cari Tanggal: <input id="daterange-search" type="text" name="search" value="@ViewData["CurrentFilter"]" />
+                <button type="submit" class="btn btn-primary">Search</button>
+            </p>
+        </div>
+    </form> *@
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                User
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Day)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Total)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReturnedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Day)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Total)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReturnedAt)
+            </td>
+            <td>
+                    @if (item.Status == 0)
+                    {
+                        <text>Dipinjam</text>
+                    }
+                    else
+                    {
+                        <text>Dikembalikan</text>
+
+                    }
+                </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+
+@section Scripts {
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script>
+        $('#daterange-search').daterangepicker({
+            startDate: moment(),
+            endDate: moment().add(1, 'day')
+        });
+        $('#daterange-search').on('apply.daterangepicker', function (ev, picker) {
+            var startDate = picker.startDate.format('YYYY-MM-DD');
+            var endDate = picker.endDate.format('YYYY-MM-DD');
+
+            if (startDate == endDate) {
+                picker.setEndDate(picker.endDate.add(1, 'day'));
+            }
+        });
+    </script>
+}

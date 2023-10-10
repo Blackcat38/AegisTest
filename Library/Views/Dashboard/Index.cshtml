@@ -1,0 +1,111 @@
+﻿@model IEnumerable<Library.Models.Procedure.GetTransaction>
+
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="DownloadReport">Export</a>
+    </p>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            @if (User.IsInRole("Admin"))
+            {
+                <th>
+                    User
+                </th>
+            }
+            <th>
+                @Html.DisplayNameFor(model => model.Day)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Total)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReturnedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DayLeft)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                @if (User.IsInRole("Admin"))
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                }
+                <td>
+                    @Html.DisplayFor(modelItem => item.Day)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Total)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReturnedAt)
+                </td>
+                <td>
+                    @if (item.Status != 0)
+                    {
+                        @if (item.DayLeft >= 0)
+                        {
+                            <text>Tepat Waktu</text>
+                        }
+                        else
+                        {
+                            <text>Terlambat</text>
+
+                        }
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => item.DayLeft)
+                    }
+                </td>
+                <td>
+                    @if (item.Status == 0)
+                    {
+                        <text>Dipinjam</text>
+                    }
+                    else
+                    {
+                        <text>Dikembalikan</text>
+
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
